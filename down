@@ -1,0 +1,23 @@
+#!/bin/bash
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+
+#set background
+if [ -x "$command -v wallc)" ]; then
+    wallc set $SCRIPTPATH/down.jpg
+fi
+
+# if [ -x "/tmp/uhrwerk" ]; then
+  # rm /tmp/uhrwerk
+# fi
+
+leftwm command "UnloadTheme"
+
+# if [ -x "$(command -v eww)" ]; then
+  eww kill
+# fi
+# pkill eww
+# pkill compton
+# pkill picom
+# pkill conky
+# pkill uhrwerk

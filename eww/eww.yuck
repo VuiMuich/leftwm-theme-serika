@@ -1,0 +1,192 @@
+; Widgets
+(defwidget tags []
+    (workspaces))
+
+(defwidget sidestuff_left []
+    (box :class "sidestuff"
+         :orientation "h"
+         :space-evenly false
+         :halign "start"
+         :valign "start"
+         :vexpand true
+        (power-menu)
+        (keyboard-layout)
+        (ws-layout)))
+
+(defwidget sidestuff_right []
+    (box :class "sidestuff"
+         :orientation "h"
+         :space-evenly false
+         :halign "end"
+        (metric :label ""
+                :label-class "icon"
+                :value '${EWW_RAM.used_mem_perc}'
+                :onchange "")
+        (metric :label ""
+                :label-class "icon"
+                :value {wifi-signal != "" ? wifi-signal : "0.0"}
+                :onchange "")
+        (metric :label '${audio-icon}'
+                :label-class {audio-icon == "" || audio-icon == "ﳌ" ? "icon-small" : "icon-smaller"}
+                :value volume
+                :onchange  "amixer -D pulse sset Master {}%")
+        (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "" : "ﮣ"}
+                :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon"  : "icon-smaller"}
+                :value  '${EWW_BATTERY["BAT0"].capacity}'
+                :tooltip '${EWW_BATTERY["BAT0"].capacity}'
+                :onchange "")
+        (time)))
+
+(defwidget workspaces []
+    (box :class "workspaces"
+         :orientation "h"
+         :space-evenly true
+         :halign "center"
+        (literal :content {wm-tags})))
+
+(defwidget power-menu []
+    (box :class "power" 
+         :orientation "h"
+         :space-evenly false
+         :halign "start"
+         :valign "start"
+      (button :onclick "eww update pwmen-open=${!pwmen-open}" "襤")))
+      ; (revealer :transition "slideright" :reveal pwmen-open (pwmen))))
+
+(defwidget pwmen []
+    (box :class "icon-key"
+         :orientation "v"
+         :space-evenly true
+         :valign "start"
+      (button :onclick "systemctl suspend" "鈴 Suspend")
+      (button :onclick "systemctl hibernate" " Hibernate")
+      (button :onclick "dm-tool switch-to-greeter" "שּ Swtich to Greeter")
+      (button :onclick "dm-tool lock" " Lock")
+      (button :onclick "loginctl kill-user $XDG_SESSION_ID" " Exit")
+      (button :onclick "reboot" "敏 Reboot")
+      (button :onclick "shutdown now" "襤 Shutdown")))
+
+(defwidget keyboard-layout []
+    (box :class "icon-key"
+         :orientation "h"
+         :space-evenly false
+         :halign "start"
+         :valign "start"
+        {kbd-layout}))
+
+(defwidget ws-layout []
+    (box :class "ws-layout"
+         :space-evenly false
+         :halign "start" 
+         :valign "start"
+         :width 220
+        (box :class "icon-ws-layout" "")
+        (box {workspace-layout})))
+
+(defwidget metric [label label-class value onchange]
+  (box :orientation "h"
+       :class "metric"
+       :space-evenly false
+    (box :class label-class label)
+    (scale :min 0
+           :max 101
+           :active {onchange != ""}
+           :value value
+           :onchange onchange)))
+
+(defwidget time []
+    (box :class "time"
+        (button :onclick "eww open --toggle uhr" :class "icon-time" "")
+        {hour + ":" + minute}))
+
+(defwidget uhr []
+    (box :class "uhr"
+        {uhrwerk}))
+
+(defwidget notes []
+    (box :class "notes"
+        {notes}))
+
+; Variables
+(defvar pwmen-open false)
+; sliders
+(defpoll volume :interval "16s" "scripts/getvol")
+(deflisten audio-icon "scripts/getpa")
+(defpoll wifi-signal :initial "0" :interval "10s" "scripts/getwifi")
+(defpoll ssid :interval "10s" "nmcli -f IN-USE,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'")
+; Time
+(defpoll number_day :interval "5h" "date '+%d'")
+(defpoll month :interval "10h" "date '+%b'")
+(defpoll minute :interval "10s" "date '+%M'")
+(defpoll hour :interval "1m" "date '+%H'")
+(defpoll year_full :interval "15h" "date '+%Y'")
+(deflisten uhrwerk "uhrwerk -t $HOME/Git/uhrwerk/src/time-in-words-templates/en_1.toml")
+; WM and Keyboard state
+(deflisten wm-tags 'leftwm-state -w 0 -t ~/.config/leftwm/themes/current/template.liquid')
+(deflisten kbd-layout "scripts/get-kbd-layout")
+(deflisten workspace-layout 'leftwm-state -w 0 -s "{{workspace.layout}}"')
+; Notes
+(deflisten notes "cat -n $HOME/todo.md")
+
+; Windows
+(defwindow left
+           :monitor 0
+           :windowtype "dock"
+           :stacking "overlay"
+           :geometry (geometry :x "21px"
+                               :y "13px"
+                               :width "295px"
+                               ; :height "34px"
+                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :anchor "top left")
+           :reserve (struts :side "top" :distance "55px")
+    (sidestuff_left))
+
+(defwindow tags
+           :monitor 0
+           :windowtype "dock"
+           :geometry (geometry :x "0px"
+                               :y "13px"
+                               :width "19%"
+                               ; :height "34px"
+                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :anchor "top center")
+           :reserve (struts :side "top" :distance "55px")
+    (tags))
+
+(defwindow right
+           :monitor 0
+           :windowtype "dock"
+           :geometry (geometry :x "-21px"
+                               :y "13px"
+                               :width "420px"
+                               ; :height "34px"
+                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :anchor "top right")
+           :reserve (struts :side "top" :distance "55px")
+    (sidestuff_right))
+
+(defwindow uhr
+           :monitor 0
+           :stacking "fg"
+           :windowtype "dialog"
+           :geometry (geometry :x "89px"
+                               :y "-89px"
+                               :width "600px"
+                               :height "55"
+                               :anchor "bottom left")
+                       
+           :wm-ignore true
+    (uhr))
+
+(defwindow notes
+           :monitor 0
+           :stacking "bg"
+           :windowtype "dialog"
+           :geometry (geometry :x "-89px"
+                               :y "89px"
+                               :width "600px"
+                               :height "600px"
+                               :anchor "top right")
+           :wm-ignore true
+    (notes))

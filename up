@@ -8,31 +8,21 @@ if [ -f "/tmp/leftwm-theme-down" ]; then
 fi
 ln -s $SCRIPTPATH/down /tmp/leftwm-theme-down
 
-# Boot picom or compton if it exists
-# if [ -x "$(command -v picom)" ]; then
-  # picom --experimental-backends &> /dev/null &
-  # picom &> /dev/null &
-# elif [ -x "$(command -v compton)" ]; then
-  # compton &> /dev/null &
-# fi
-
 # Set the theme.toml config
 leftwm command "LoadTheme $SCRIPTPATH/theme.toml"
 
 # Set background
-if [ -x "$command -v wallc" ]; then
-    BACKGROUND = $SCRIPTPATH/$(ls $SCRIPTPATH/background* | shuf -n 1)
-    wallc set $BACKGROUND
+if [ -x "$(command -v wallc)" ]; then
+    WALLPAPER=$(ls $SCRIPTPATH/background* | shuf -n 1)
+    wallc set $WALLPAPER
 fi
-
-# Conky
-# ~/.config/conky/start-conky.sh &
+# if [ -x "$(command -v feh)" ]; then
+#     WALLPAPER=$(ls $SCRIPTPATH/background* | shuf -n 1)
+#     feh --bg-scale $WALLPAPER
+# fi
 
 # start eww daemon
 eww daemon &
 
 #open eww windows
 eww open-many left tags right
-
-#write uhrwerk to temporary file
-# uhrwerk > /tmp/uhrwerk &

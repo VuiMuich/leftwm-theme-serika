@@ -1,2 +1,3 @@
 #!/bin/sh
-amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' 'NR==1 { print $2 }' | tr -d '%'
+# amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' 'NR==1 { print $2 }' | tr -d '%'
+pactl list sinks | grep left: | awk '{print $5}' | tr -d "%"

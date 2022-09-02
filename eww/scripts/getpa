@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 update_sink() {
-    sink=$(pacmd list-sinks | sed -n '/\* index:/ s/.*: //p')
+    # sink=$(pacmd list-sinks | sed -n '/\* index:/ s/.*: //p')
+    sink=$(pactl list sinks | grep Name | awk '{print $2}')
 }
 
 volume_up() {
@@ -22,8 +23,8 @@ volume_mute() {
 volume_print() {
     update_sink
 
-    active_port=$(pacmd list-sinks | sed -n "/index: $sink/,/index:/p" | grep active)
-    muted=$(pulseaudio-ctl full-status | awk '{print $2}')
+    active_port=$(pactl list sinks | grep Active)
+    muted=$(pactl list sinks | grep Mute | awk '{print $2}')
 
     if echo "$active_port" | grep -q speaker && echo "$muted" | grep -q yes; then
         icon="遼"
@@ -42,7 +43,7 @@ listen() {
     volume_print
 
     pactl subscribe | while read -r event; do
-        if echo "$event" | grep -qv "Client"; then
+        if echo "$event" | grep -q "change"; then
             volume_print
         fi
     done

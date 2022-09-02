@@ -9,19 +9,22 @@ fi
 ln -s $SCRIPTPATH/down /tmp/leftwm-theme-down
 
 # Set the theme.toml config
+# leftwm command "LoadTheme $SCRIPTPATH/theme.toml"
+leftwm command "LoadTheme $SCRIPTPATH/theme.ron"
 leftwm command "LoadTheme $SCRIPTPATH/theme.toml"
 
 # Set background
-if [ -x "$(command -v wallc)" ]; then
-    WALLPAPER=$(ls $SCRIPTPATH/background* | shuf -n 1)
-    wallc set $WALLPAPER
-fi
-# if [ -x "$(command -v feh)" ]; then
+# if [ -x "$(command -v wallc)" ]; then
 #     WALLPAPER=$(ls $SCRIPTPATH/background* | shuf -n 1)
-#     feh --bg-scale $WALLPAPER
+#     wallc set $WALLPAPER
 # fi
+if [ -x "$(command -v feh)" ]; then
+    WALLPAPER=$(ls $SCRIPTPATH/background* | shuf -n 1)
+    feh --bg-scale $WALLPAPER
+fi
 
 # start eww daemon
+# eww --debug daemon &
 eww daemon &
 
 #open eww windows

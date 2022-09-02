@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 bone=""
+vou=""
 t3=""
-xkb-switch | awk -F '[()]' -v awkbone="$bone" -v awkt3="$t3" '{
+xkb-switch | awk -F '[()]' -v awkbone="$bone" -v awkvou="$vou" -v awkt3="$t3" '{
   replace["bone"] = awkbone;
+  replace["vou"] = awkvou;
   replace["T3"] = awkt3;
   layout = ($2 in replace) ? replace[$2] : $2;
   print layout;
@@ -10,6 +12,10 @@ xkb-switch | awk -F '[()]' -v awkbone="$bone" -v awkt3="$t3" '{
 xkb-switch -W | while read -r line; do
 if [ $line == "de(bone)" ]; then
     echo $bone
+  elif [ $line == "de(vou)" ]; then
+    echo $vou
+  elif [ $line == "custom(vou)" ]; then
+    echo $vou
   elif [ $line == "de(T3)" ]; then
     echo $t3
   else

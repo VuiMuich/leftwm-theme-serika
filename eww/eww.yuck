@@ -1,35 +1,36 @@
 ; Widgets
-(defwidget tags []
-    (workspaces))
-
 (defwidget sidestuff_left []
     (box :class "sidestuff"
          :orientation "h"
          :space-evenly false
-         :halign "start"
+         :halign "center"
          :valign "start"
-         :vexpand true
-        (power-menu)
+         :width 327
+        ; (power-menu)
         (keyboard-layout)
+        ; (window-title)
         (ws-layout)))
 
 (defwidget sidestuff_right []
     (box :class "sidestuff"
          :orientation "h"
          :space-evenly false
-         :halign "end"
+         :halign "center"
         (metric :label ""
                 :label-class "icon"
                 :value '${EWW_RAM.used_mem_perc}'
+                :tooltip  '${EWW_RAM.used_mem_perc}'
                 :onchange "")
         (metric :label ""
                 :label-class "icon"
                 :value {wifi-signal != "" ? wifi-signal : "0.0"}
+                :tooltip "${wifi-signal != "" ? wifi-signal : "0.0"}"
                 :onchange "")
         (metric :label '${audio-icon}'
                 :label-class {audio-icon == "" || audio-icon == "ﳌ" ? "icon-small" : "icon-smaller"}
                 :value volume
-                :onchange  "amixer -D pulse sset Master {}%")
+                :tooltip volume
+                :onchange  "pactl set-sink-volume @DEFAULT_SINK@ {}%")
         (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "" : "ﮣ"}
                 :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon"  : "icon-smaller"}
                 :value  '${EWW_BATTERY["BAT0"].capacity}'
@@ -37,15 +38,36 @@
                 :onchange "")
         (time)))
 
-(defwidget workspaces []
+(defwidget metric [label label-class value tooltip onchange]
+  (box :orientation "h"
+       :class "metric"
+       :space-evenly false
+       :tooltip tooltip
+    (box :class label-class label)
+    (scale :min 0
+           :max 101
+           :active {onchange != ""}
+           :value value
+           :onchange onchange)))
+
+(defwidget tags []
     (box :class "workspaces"
          :orientation "h"
          :space-evenly true
          :halign "center"
-        (literal :content {wm-tags})))
+      (box
+        (for tag in '${wmstate.workspaces[0].tags}'
+          (button
+            :class {tag.mine ? "ws-button-mine" :
+                    tag.visible ? "ws-button-visible" :
+                    tag.urgent ? "ws-button-urgent" :
+                    tag.busy ? "ws-button-busy" : "ws-button"}
+            :onclick "leftwm-command \"SendWorkspaceToTag 0 ${tag.index}\""
+            {!tag.mine && !tag.busy && !tag.visible && !tag.urgent ?  "·" : "${tag.name}"})))))
+             
 
 (defwidget power-menu []
-    (box :class "power" 
+    (box :class "power"
          :orientation "h"
          :space-evenly false
          :halign "start"
@@ -55,9 +77,9 @@
 
 (defwidget pwmen []
     (box :class "icon-key"
-         :orientation "v"
-         :space-evenly true
-         :valign "start"
+       :orientation "v"
+       :space-evenly true
+       :valign "start"
       (button :onclick "systemctl suspend" "鈴 Suspend")
       (button :onclick "systemctl hibernate" " Hibernate")
       (button :onclick "dm-tool switch-to-greeter" "שּ Swtich to Greeter")
@@ -71,8 +93,7 @@
          :orientation "h"
          :space-evenly false
          :halign "start"
-         :valign "start"
-        {kbd-layout}))
+        {kbd-layout != "" ? kbd-layout : ""}))
 
 (defwidget ws-layout []
     (box :class "ws-layout"
@@ -81,23 +102,24 @@
          :valign "start"
          :width 220
         (box :class "icon-ws-layout" "")
-        (box {workspace-layout})))
+        (box {wmstate.workspaces[0].layout ?: "n/a"})))
 
-(defwidget metric [label label-class value onchange]
-  (box :orientation "h"
-       :class "metric"
-       :space-evenly false
-    (box :class label-class label)
-    (scale :min 0
-           :max 101
-           :active {onchange != ""}
-           :value value
-           :onchange onchange)))
+(defwidget window-title []
+    (box :class "ws-layout"
+         :space-evenly false
+         :halign "start" 
+         :valign "start"
+         :width 220
+        (box :class "icon-ws-layout" "类")
+        (label
+         :limit-width 10
+         :show-truncated true
+         :text "${wmstate.window_title ?: 'Desktop'}")))
 
 (defwidget time []
     (box :class "time"
         (button :onclick "eww open --toggle uhr" :class "icon-time" "")
-        {hour + ":" + minute}))
+        {time}))
 
 (defwidget uhr []
     (box :class "uhr"
@@ -110,21 +132,18 @@
 ; Variables
 (defvar pwmen-open false)
 ; sliders
-(defpoll volume :interval "16s" "scripts/getvol")
 (deflisten audio-icon "scripts/getpa")
+(defpoll volume :initial "50" :interval "16s" "scripts/getvol")
 (defpoll wifi-signal :initial "0" :interval "10s" "scripts/getwifi")
 (defpoll ssid :interval "10s" "nmcli -f IN-USE,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'")
 ; Time
-(defpoll number_day :interval "5h" "date '+%d'")
-(defpoll month :interval "10h" "date '+%b'")
-(defpoll minute :interval "10s" "date '+%M'")
-(defpoll hour :interval "1m" "date '+%H'")
-(defpoll year_full :interval "15h" "date '+%Y'")
+(deflisten time "uhrwerk -d")
 (deflisten uhrwerk "uhrwerk -t $HOME/Git/uhrwerk/src/time-in-words-templates/en_1.toml")
 ; WM and Keyboard state
-(deflisten wm-tags 'leftwm-state -w 0 -t ~/.config/leftwm/themes/current/template.liquid')
 (deflisten kbd-layout "scripts/get-kbd-layout")
-(deflisten workspace-layout 'leftwm-state -w 0 -s "{{workspace.layout}}"')
+(deflisten wmstate 
+           :initial '{"workspaces":[{"layout":"", "tags":[{"name":"", "index":0, "mine":false, "busy":false, "visible":false, "urgent":false }] }]}'
+           "leftwm state")
 ; Notes
 (deflisten notes "cat -n $HOME/todo.md")
 
@@ -132,10 +151,10 @@
 (defwindow left
            :monitor 0
            :windowtype "dock"
-           :stacking "overlay"
+           ; :stacking "overlay"
            :geometry (geometry :x "21px"
-                               :y "13px"
-                               :width "295px"
+                               :y "10px"
+                               :width "327px"
                                ; :height "34px"
                                :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top left")
@@ -144,10 +163,10 @@
 
 (defwindow tags
            :monitor 0
-           :windowtype "dock"
+           :windowtype "desktop"
            :geometry (geometry :x "0px"
-                               :y "13px"
-                               :width "19%"
+                               :y "10px"
+                               :width "456px"
                                ; :height "34px"
                                :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top center")
@@ -158,8 +177,8 @@
            :monitor 0
            :windowtype "dock"
            :geometry (geometry :x "-21px"
-                               :y "13px"
-                               :width "420px"
+                               :y "10px"
+                               ; :width "541px"
                                ; :height "34px"
                                :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top right")
@@ -168,20 +187,19 @@
 
 (defwindow uhr
            :monitor 0
-           :stacking "fg"
+           ; :stacking "fg"
            :windowtype "dialog"
+           :wm-ignore true
            :geometry (geometry :x "89px"
                                :y "-89px"
                                :width "600px"
                                :height "55"
                                :anchor "bottom left")
-                       
-           :wm-ignore true
     (uhr))
 
 (defwindow notes
            :monitor 0
-           :stacking "bg"
+           ; :stacking "bg"
            :windowtype "dialog"
            :geometry (geometry :x "-89px"
                                :y "89px"

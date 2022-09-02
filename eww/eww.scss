@@ -4,16 +4,16 @@
 
 //Global Styles
 .tags {
-  background-color: rgba(33, 40, 52, 0.55);
-  color: rgb(176, 180, 188);
+  background-color: #323437;
+  color: #e1e1e3;
   font-family: Hasklug Nerd Font Mono;
   font-size: 21px;
 }
 
 .uhr {
   all: unset;
-  background-color: rgba(86, 50, 52, 0);
-  color: rgb(176, 180, 188);
+  background-color: #dcd8cf;
+  color: #323437;
   font-family: Existence Unicase Light;
   font-size: 55px;
   padding: 13px;
@@ -21,34 +21,32 @@
 
 .notes {
   all: unset;
-  background-color: rgba(86, 50, 52, 0.55);
-  color: rgb(176, 180, 188);
+  background-color: #dcd8cf;
+  color: #323437;
   font-family: Existence Unicase Light;
   font-size: 21px;
   padding: 8px;
 }
 
 .tooltip {
-  background-color: rgba(33, 40, 52, 0.55);
+  background-color: #323437;
 }
 
 // Styles on classes (see eww.xml for more information)
 .sidestuff {
-  background-color: rgba(33, 40, 52, 0.55);
-  color: rgb(176, 180, 188);
+  background-color: #323437;
+  color: #dcd8cf;
   font-family: Hasklug Nerd Font Mono;
   padding-left: 21px;
   padding-right: 21px;
 }
 
 .metric scale trough highlight {
-  all: unset;
-  background-color: rgb(86, 50, 52);
+  background-color: #e2b714;
   border-radius: 10px;
 }
 .metric scale trough {
-  all: unset;
-  background-color: rgb(184, 170, 149);
+  background-color: #646669;
   border-radius: 55px;
   min-height: 3px;
   min-width: 50px;
@@ -79,7 +77,6 @@
 }
 .icon-time {
   font-size: 29px;
-  padding-left: 8px;
   padding-right: 8px;
 }
 .time {
@@ -96,21 +93,25 @@
   padding-right: 13px;
 }
 .workspaces button:hover {
-    color: rgb(184,170,149);
+    color: #ca4754;
 }
 .ws-button-mine {
-  background-color: rgba(65, 135, 125, 0.55);
-  color: rgb(176, 180, 188);
+  background-color: #e2b714;
+  color: #646669;
 }
 .ws-button-visible {
-  background-color: rgba(85, 85, 85, 0.55);
-  color: rgb(33, 40, 52);
+  background-color: #646669;
+  color: #323437;
+}
+.ws-button-urgent {
+  background-color: #ca4754;
+  color: #323437;
 }
 .ws-button-busy {
-  color: rgb(65, 135, 125);
+  color: #e2b714;
 }
 .ws-button {
-  color: rgb(153, 153, 153);
+  color: #646669;
 }
 .ws-layout {
   font-size: 17px;

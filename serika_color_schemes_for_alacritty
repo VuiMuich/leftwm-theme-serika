@@ -1,0 +1,77 @@
+# paste this to your `alacritty` config
+schemes:
+  #serika color scheme for dark colors
+  serika_dark: &serika_dark
+    primary:
+       background: '#323337'
+       foreground: '#dcd8cf'
+
+    # Cursor colors
+    # cursor:
+       # text: '#323437'
+       # cursor: '#d1d0c5'
+
+    # Selection colors
+    selection:
+       text: '#323437'
+       background: '#e2b714'
+
+    # Normal colors
+    normal:
+       black:   '#212125'
+       red:     '#e29da7'
+       green:   '#cbd5c3'
+       yellow:  '#e2b714'
+       blue:    '#9cb0c9'
+       magenta: '#c4b5c9'
+       cyan:    '#9da9af'
+       white:   '#e1e1e3'
+
+    # Bright colors
+    bright:
+       black:   '#646669'
+       red:     '#f9ebed'
+       green:   '#e5eae1'
+       yellow:  '#f7ca88'
+       blue:    '#bdcadb'
+       magenta: '#dcd3df'
+       cyan:    '#b9c2c6'
+       white:   '#f8f8fa'
+
+  serika_light: &serika_light
+    primary:
+       background: '#e1e1e3'
+       foreground: '#323337'
+
+    # Cursor colors
+    # cursor:
+       # text: '#323437'
+       # cursor: '#d1d0c5'
+
+    # Selection colors
+    selection:
+       text: '#323437'
+       background: '#e2b714'
+
+    # Normal colors
+    normal:
+       black:   '#212125'
+       red:     '#3b1218'
+       green:   '#323c2a'
+       yellow:  '#e2b714'
+       blue:    '#2d3e52'
+       magenta: '#372b3b'
+       cyan:    '#505d62'
+       white:   '#e1e1e3'
+
+    # Bright colors
+    bright:
+       black:   '#646669'
+       red:     '#621d28'
+       green:   '#586949'
+       yellow:  '#f3d772'
+       blue:    '#486384'
+       magenta: '#534059'
+       cyan:    '#73858c'
+       white:   '#f8f8fa'
+

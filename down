@@ -14,9 +14,9 @@ fi
 leftwm command "UnloadTheme"
 
 # if [ -x "$(command -v eww)" ]; then
-  eww kill
+  # eww kill
 # fi
-# pkill eww
+pkill eww
 # pkill compton
 # pkill picom
 # pkill conky

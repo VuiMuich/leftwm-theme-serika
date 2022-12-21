@@ -1,9 +1,11 @@
 * {
   all: unset; //Unsets everything so you can style everything from scratch
+  // background-color: #323437;
 }
 
 //Global Styles
 .tags {
+  all: unset;
   background-color: #323437;
   color: #e1e1e3;
   font-family: Hasklug Nerd Font Mono;
@@ -41,10 +43,16 @@
   padding-right: 21px;
 }
 
+.tray {
+  background-color: #323437;
+  padding-left: 21px;
+}
+
 .metric scale trough highlight {
   background-color: #e2b714;
   border-radius: 10px;
 }
+
 .metric scale trough {
   background-color: #646669;
   border-radius: 55px;
@@ -57,68 +65,84 @@
     min-height: 13px;
   }
 }
+
 .icon {
   font-size: 34px;
 }
+
 .icon-small {
   font-size: 29px;
 }
+
 .icon-smaller {
   font-size: 21px;
 }
+
 .icon-key {
   font-size: 34px;
   padding-left: 21px;
 }
+
 .icon-ws-layout {
   font-size: 29px;
   padding-left: 21px;
   padding-right: 8px;
 }
+
 .icon-time {
   font-size: 29px;
   padding-right: 8px;
 }
+
 .time {
   font-size: 17px;
   padding-right: 13px;
 }
+
 .workspaces {
   padding-left: 21px;
   padding-right: 21px;
 }
+
 .workspaces button {
   font-size: 34px;
   padding-left: 13px;
   padding-right: 13px;
 }
+
 .workspaces button:hover {
-    color: #ca4754;
+  color: #ca4754;
 }
+
 .ws-button-mine {
   background-color: #e2b714;
   color: #646669;
 }
+
 .ws-button-visible {
   background-color: #646669;
   color: #323437;
 }
+
 .ws-button-urgent {
   background-color: #ca4754;
-  color: #323437;
 }
+
 .ws-button-busy {
   color: #e2b714;
 }
+
 .ws-button {
   color: #646669;
 }
+
 .ws-layout {
   font-size: 17px;
   padding-right: 8px;
   padding-top: 4px;
 }
-.power{
+
+.power {
   font-size: 29px;
   padding-top: 4px;
 }

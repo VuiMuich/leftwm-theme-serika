@@ -27,7 +27,7 @@
                 :tooltip "${wifi-signal != "" ? wifi-signal : "0.0"}"
                 :onchange "")
         (metric :label '${audio-icon}'
-                :label-class {audio-icon == "" || audio-icon == "ﳌ" ? "icon-small" : "icon-smaller"}
+                :label-class {audio-icon == "" || audio-icon == "ﳌ" || audio-icon == "" || audio-icon == "" ? "icon-small" : "icon-smaller"}
                 :value volume
                 :tooltip volume
                 :onchange  "pactl set-sink-volume @DEFAULT_SINK@ {}%")
@@ -50,13 +50,13 @@
            :value value
            :onchange onchange)))
 
-(defwidget tags []
+(defwidget tags [ws-id]
     (box :class "workspaces"
          :orientation "h"
          :space-evenly true
          :halign "center"
       (box
-        (for tag in '${wmstate.workspaces[0].tags}'
+        (for tag in '${wmstate.workspaces[ws-id].tags}'
           (button
             :class {tag.mine ? "ws-button-mine" :
                     tag.visible ? "ws-button-visible" :
@@ -129,6 +129,9 @@
     (box :class "notes"
         {notes}))
 
+(defwidget systray []
+    (system-tray))
+
 ; Variables
 (defvar pwmen-open false)
 ; sliders
@@ -138,7 +141,7 @@
 (defpoll ssid :interval "10s" "nmcli -f IN-USE,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'")
 ; Time
 (deflisten time "uhrwerk -d")
-(deflisten uhrwerk "uhrwerk -t $HOME/Git/uhrwerk/src/time-in-words-templates/en_1.toml")
+(deflisten uhrwerk "uhrwerk -t $HOME/Git/uhrwerk/time-in-words-templates/de_1.ron")
 ; WM and Keyboard state
 (deflisten kbd-layout "scripts/get-kbd-layout")
 (deflisten wmstate 
@@ -163,7 +166,7 @@
 
 (defwindow tags
            :monitor 0
-           :windowtype "desktop"
+           :windowtype "dock"
            :geometry (geometry :x "0px"
                                :y "10px"
                                :width "456px"
@@ -171,19 +174,31 @@
                                :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top center")
            :reserve (struts :side "top" :distance "55px")
-    (tags))
+    (tags :ws-id 0))
 
 (defwindow right
            :monitor 0
            :windowtype "dock"
            :geometry (geometry :x "-21px"
                                :y "10px"
-                               ; :width "541px"
+                               ; :width "548px"
                                ; :height "34px"
                                :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top right")
            :reserve (struts :side "top" :distance "55px")
     (sidestuff_right))
+
+(defwindow tray
+           :monitor 0
+           :windowtype "dock"
+           :geometry (geometry :x "348px"
+                               :y "10px"
+                               :width "327px"
+                               ; :height "34px"
+                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :anchor "top left")
+           :reserve (struts :side "top" :distance "55px")
+    (systray))
 
 (defwindow uhr
            :monitor 0

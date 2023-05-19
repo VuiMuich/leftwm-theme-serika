@@ -8,7 +8,8 @@
   all: unset;
   background-color: #323437;
   color: #e1e1e3;
-  font-family: Hasklug Nerd Font Mono;
+  // font-family: Hasklug Nerd Font Mono;
+  font-family: FiraCode Nerd Font;
   font-size: 21px;
 }
 
@@ -34,11 +35,10 @@
   background-color: #323437;
 }
 
-// Styles on classes (see eww.xml for more information)
+// Styles on classes
 .sidestuff {
   background-color: #323437;
   color: #dcd8cf;
-  font-family: Hasklug Nerd Font Mono;
   padding-left: 21px;
   padding-right: 21px;
 }
@@ -67,47 +67,48 @@
 }
 
 .icon {
-  font-size: 34px;
+  font-size: 27px;
 }
 
 .icon-small {
-  font-size: 29px;
+  font-size: 19px;
+}
+
+.icon-bat {
+  font-size: 27px;
 }
 
 .icon-smaller {
-  font-size: 21px;
+  font-size: 19px;
+  padding-right: 5px;
 }
 
 .icon-key {
-  font-size: 34px;
+  font-size: 23px;
   padding-left: 21px;
 }
 
 .icon-ws-layout {
-  font-size: 29px;
+  font-size: 27px;
   padding-left: 21px;
   padding-right: 8px;
 }
 
 .icon-time {
-  font-size: 29px;
+  font-size: 21px;
   padding-right: 8px;
 }
 
 .time {
-  font-size: 17px;
+  font-family: FiraCode Nerd Font Mono;
+  font-size: 15px;
   padding-right: 13px;
-}
-
-.workspaces {
-  padding-left: 21px;
-  padding-right: 21px;
 }
 
 .workspaces button {
-  font-size: 34px;
-  padding-left: 13px;
-  padding-right: 13px;
+  font-size: 21px;
+  padding-left: 8px;
+  padding-right: 16px;
 }
 
 .workspaces button:hover {
@@ -143,6 +144,6 @@
 }
 
 .power {
-  font-size: 29px;
+  font-size: 21px;
   padding-top: 4px;
 }

@@ -36,6 +36,10 @@ volume_print() {
         icon=""
     elif echo "$active_port" | grep -q headset && echo "$muted" | grep -q yes; then
         icon=""
+    elif echo "$active_port" | grep -q hdmi && echo "$muted" | grep -q no; then
+        icon="󰽟"
+    elif echo "$active_port" | grep -q hdmi && echo "$muted" | grep -q yes; then
+        icon="󰽠"
     else
         icon="蓼"
     fi

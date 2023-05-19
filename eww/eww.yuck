@@ -27,12 +27,18 @@
                 :tooltip "${wifi-signal != "" ? wifi-signal : "0.0"}"
                 :onchange "")
         (metric :label '${audio-icon}'
-                :label-class {audio-icon == "" || audio-icon == "ﳌ" || audio-icon == "" || audio-icon == "" ? "icon-small" : "icon-smaller"}
+                :label-class {audio-icon == ""
+                           || audio-icon == "ﳌ"
+                           || audio-icon == ""
+                           || audio-icon == ""
+                           || audio-icon == "󰽟"
+                           || audio-icon == "󰽠"
+                            ? "icon-small" : "icon-smaller"}
                 :value volume
                 :tooltip volume
                 :onchange  "pactl set-sink-volume @DEFAULT_SINK@ {}%")
         (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "" : "ﮣ"}
-                :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon"  : "icon-smaller"}
+                :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon-bat"  : "icon-smaller"}
                 :value  '${EWW_BATTERY["BAT0"].capacity}'
                 :tooltip '${EWW_BATTERY["BAT0"].capacity}'
                 :onchange "")
@@ -102,6 +108,7 @@
          :valign "start"
          :width 220
         (box :class "icon-ws-layout" "")
+        ; (box {replace(wmstate.workspaces[0].layout, '([A-Z])([a-z])*', '${2} ') ?: "n/a"})))
         (box {wmstate.workspaces[0].layout ?: "n/a"})))
 
 (defwidget window-title []
@@ -129,8 +136,8 @@
     (box :class "notes"
         {notes}))
 
-(defwidget systray []
-    (system-tray))
+(defwidget systemtray []
+    (systray :pack-direction "ltr"))
 
 ; Variables
 (defvar pwmen-open false)
@@ -159,7 +166,7 @@
                                :y "10px"
                                :width "327px"
                                ; :height "34px"
-                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top left")
            :reserve (struts :side "top" :distance "55px")
     (sidestuff_left))
@@ -171,7 +178,7 @@
                                :y "10px"
                                :width "456px"
                                ; :height "34px"
-                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top center")
            :reserve (struts :side "top" :distance "55px")
     (tags :ws-id 0))
@@ -183,22 +190,24 @@
                                :y "10px"
                                ; :width "548px"
                                ; :height "34px"
-                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top right")
            :reserve (struts :side "top" :distance "55px")
     (sidestuff_right))
 
 (defwindow tray
            :monitor 0
-           :windowtype "dock"
+           :windowtype "dialog"
+           :wm-ignore true
+           :focusable true
            :geometry (geometry :x "348px"
                                :y "10px"
                                :width "327px"
                                ; :height "34px"
-                               :height "44px" ; this is a workaround, as gtk is expanding the height to this anyways
+                               :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top left")
            :reserve (struts :side "top" :distance "55px")
-    (systray))
+    (systemtray)) 
 
 (defwindow uhr
            :monitor 0

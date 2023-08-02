@@ -1,3 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # amixer -D pulse sget Master | grep 'Left:' | awk -F'[][]' 'NR==1 { print $2 }' | tr -d '%'
-pactl list sinks | grep left: | awk '{print $5}' | tr -d "%"
+# pactl list sinks | grep left: | awk '{print $5}' | tr -d "%"
+wpctl get-volume @DEFAULT_SINK@ | awk '{print $2 * 100}'

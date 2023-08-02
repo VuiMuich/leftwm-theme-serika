@@ -7,7 +7,7 @@
          :valign "start"
          :width 327
         ; (power-menu)
-        (keyboard-layout)
+        ; (keyboard-layout)
         ; (window-title)
         (ws-layout)))
 
@@ -16,28 +16,28 @@
          :orientation "h"
          :space-evenly false
          :halign "center"
-        (metric :label ""
-                :label-class "icon"
+        (metric :label "󰐿"
+                :label-class "icon-small"
                 :value '${EWW_RAM.used_mem_perc}'
                 :tooltip  '${EWW_RAM.used_mem_perc}'
                 :onchange "")
         (metric :label ""
-                :label-class "icon"
+                :label-class "icon-small"
                 :value {wifi-signal != "" ? wifi-signal : "0.0"}
                 :tooltip "${wifi-signal != "" ? wifi-signal : "0.0"}"
                 :onchange "")
         (metric :label '${audio-icon}'
-                :label-class {audio-icon == ""
-                           || audio-icon == "ﳌ"
-                           || audio-icon == ""
-                           || audio-icon == ""
+                :label-class {audio-icon == "󰋋"
+                           || audio-icon == "󰟎"
+                           || audio-icon == "󰋎"
+                           || audio-icon == "󰋐"
                            || audio-icon == "󰽟"
                            || audio-icon == "󰽠"
                             ? "icon-small" : "icon-smaller"}
                 :value volume
                 :tooltip volume
                 :onchange  "pactl set-sink-volume @DEFAULT_SINK@ {}%")
-        (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "" : "ﮣ"}
+        (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "󰄌" : "󰚥"}
                 :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon-bat"  : "icon-smaller"}
                 :value  '${EWW_BATTERY["BAT0"].capacity}'
                 :tooltip '${EWW_BATTERY["BAT0"].capacity}'
@@ -68,32 +68,9 @@
                     tag.visible ? "ws-button-visible" :
                     tag.urgent ? "ws-button-urgent" :
                     tag.busy ? "ws-button-busy" : "ws-button"}
-            :onclick "leftwm-command \"SendWorkspaceToTag 0 ${tag.index}\""
+            :onclick "leftwm-command \"SendWorkspaceToTag ${ws-id} ${tag.index}\""
             {!tag.mine && !tag.busy && !tag.visible && !tag.urgent ?  "·" : "${tag.name}"})))))
              
-
-(defwidget power-menu []
-    (box :class "power"
-         :orientation "h"
-         :space-evenly false
-         :halign "start"
-         :valign "start"
-      (button :onclick "eww update pwmen-open=${!pwmen-open}" "襤")))
-      ; (revealer :transition "slideright" :reveal pwmen-open (pwmen))))
-
-(defwidget pwmen []
-    (box :class "icon-key"
-       :orientation "v"
-       :space-evenly true
-       :valign "start"
-      (button :onclick "systemctl suspend" "鈴 Suspend")
-      (button :onclick "systemctl hibernate" " Hibernate")
-      (button :onclick "dm-tool switch-to-greeter" "שּ Swtich to Greeter")
-      (button :onclick "dm-tool lock" " Lock")
-      (button :onclick "loginctl kill-user $XDG_SESSION_ID" " Exit")
-      (button :onclick "reboot" "敏 Reboot")
-      (button :onclick "shutdown now" "襤 Shutdown")))
-
 (defwidget keyboard-layout []
     (box :class "icon-key"
          :orientation "h"
@@ -107,7 +84,7 @@
          :halign "start" 
          :valign "start"
          :width 220
-        (box :class "icon-ws-layout" "")
+        (box :class "icon-ws-layout" "󰧨")
         ; (box {replace(wmstate.workspaces[0].layout, '([A-Z])([a-z])*', '${2} ') ?: "n/a"})))
         (box {wmstate.workspaces[0].layout ?: "n/a"})))
 
@@ -125,16 +102,21 @@
 
 (defwidget time []
     (box :class "time"
-        (button :onclick "eww open --toggle uhr" :class "icon-time" "")
+        (button :onclick "eww open --toggle uhr" :class "icon-time" "󰥔")
         {time}))
+; (defwidget time []
+;       (box :class "time"
+;         ; :tooltip formattime(EWW_TIME, "Europe/Berlin", "%Y/%m/%d")
+;         (button :onclick "eww open --toggle uhr" :class "icon-time" "")
+;         formattime(EWW_TIME, "Europe/Berlin", "%H:%M")))
 
 (defwidget uhr []
     (box :class "uhr"
         {uhrwerk}))
 
-(defwidget notes []
-    (box :class "notes"
-        {notes}))
+(defwidget lock []
+    (box :class "lock"
+        {uhrwerk}))
 
 (defwidget systemtray []
     (systray :pack-direction "ltr"))
@@ -147,26 +129,22 @@
 (defpoll wifi-signal :initial "0" :interval "10s" "scripts/getwifi")
 (defpoll ssid :interval "10s" "nmcli -f IN-USE,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'")
 ; Time
+; (deflisten time "$HOME/.cargo/bin/uhrwerk -d")
 (deflisten time "uhrwerk -d")
+; (deflisten uhrwerk "$HOME/.cargo/bin/uhrwerk -t $HOME/Git/uhrwerk/time-in-words-templates/de_1.ron")
 (deflisten uhrwerk "uhrwerk -t $HOME/Git/uhrwerk/time-in-words-templates/de_1.ron")
 ; WM and Keyboard state
 (deflisten kbd-layout "scripts/get-kbd-layout")
 (deflisten wmstate 
            :initial '{"workspaces":[{"layout":"", "tags":[{"name":"", "index":0, "mine":false, "busy":false, "visible":false, "urgent":false }] }]}'
-           "leftwm state")
-; Notes
-(deflisten notes "cat -n $HOME/todo.md")
+           "leftwm-state")
 
 ; Windows
 (defwindow left
            :monitor 0
            :windowtype "dock"
-           ; :stacking "overlay"
            :geometry (geometry :x "21px"
                                :y "10px"
-                               :width "327px"
-                               ; :height "34px"
-                               :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top left")
            :reserve (struts :side "top" :distance "55px")
     (sidestuff_left))
@@ -176,9 +154,6 @@
            :windowtype "dock"
            :geometry (geometry :x "0px"
                                :y "10px"
-                               :width "456px"
-                               ; :height "34px"
-                               :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top center")
            :reserve (struts :side "top" :distance "55px")
     (tags :ws-id 0))
@@ -188,9 +163,6 @@
            :windowtype "dock"
            :geometry (geometry :x "-21px"
                                :y "10px"
-                               ; :width "548px"
-                               ; :height "34px"
-                               :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top right")
            :reserve (struts :side "top" :distance "55px")
     (sidestuff_right))
@@ -211,7 +183,6 @@
 
 (defwindow uhr
            :monitor 0
-           ; :stacking "fg"
            :windowtype "dialog"
            :wm-ignore true
            :geometry (geometry :x "89px"
@@ -221,14 +192,14 @@
                                :anchor "bottom left")
     (uhr))
 
-(defwindow notes
+(defwindow lock
            :monitor 0
-           ; :stacking "bg"
-           :windowtype "dialog"
-           :geometry (geometry :x "-89px"
-                               :y "89px"
-                               :width "600px"
-                               :height "600px"
-                               :anchor "top right")
+           :windowtype "desktop"
+           :stacking "fg"
            :wm-ignore true
-    (notes))
+           :geometry (geometry :x "0"
+                               :y "0"
+                               :width "100%"
+                               :height "100%"
+                               :anchor "top left")
+    (lock))

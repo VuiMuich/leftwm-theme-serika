@@ -1,44 +1,38 @@
 * {
   all: unset; //Unsets everything so you can style everything from scratch
-  // background-color: #323437;
 }
 
 //Global Styles
 .tags {
-  all: unset;
   background-color: #323437;
   color: #e1e1e3;
-  // font-family: Hasklug Nerd Font Mono;
-  font-family: FiraCode Nerd Font;
+  font-family: Monoid Nerd Font;
   font-size: 21px;
 }
 
 .uhr {
-  all: unset;
   background-color: #dcd8cf;
   color: #323437;
-  font-family: Existence Unicase Light;
+  // font-family: Existence Unicase Light;
+  font-family: Monoid Nerd Font;
   font-size: 55px;
   padding: 13px;
 }
 
-.notes {
-  all: unset;
-  background-color: #dcd8cf;
-  color: #323437;
-  font-family: Existence Unicase Light;
-  font-size: 21px;
-  padding: 8px;
-}
-
-.tooltip {
+.lock {
+  color: #dcd8cf;
   background-color: #323437;
+  // font-family: Existence Unicase Light;
+  font-family: Monoid Nerd Font;
+  font-size: 55px;
+  padding: 13px;
 }
 
 // Styles on classes
 .sidestuff {
   background-color: #323437;
   color: #dcd8cf;
+  font-family: Monoid Nerd Font;
   padding-left: 21px;
   padding-right: 21px;
 }
@@ -84,14 +78,13 @@
 }
 
 .icon-key {
-  font-size: 23px;
-  padding-left: 21px;
+  font-size: 21px;
 }
 
 .icon-ws-layout {
-  font-size: 27px;
+  font-size: 21px;
   padding-left: 21px;
-  padding-right: 8px;
+  padding-right: 13px;
 }
 
 .icon-time {
@@ -100,7 +93,7 @@
 }
 
 .time {
-  font-family: FiraCode Nerd Font Mono;
+  font-family: Monoid Nerd Font Mono;
   font-size: 15px;
   padding-right: 13px;
 }
@@ -138,12 +131,7 @@
 }
 
 .ws-layout {
-  font-size: 17px;
+  font-size: 15px;
   padding-right: 8px;
-  padding-top: 4px;
-}
-
-.power {
-  font-size: 21px;
   padding-top: 4px;
 }

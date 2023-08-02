@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-bone=""
-vou=""
+bone="󰂹"
+vou="󱪃"
 t3=""
 xkb-switch | awk -F '[()]' -v awkbone="$bone" -v awkvou="$vou" -v awkt3="$t3" '{
   replace["bone"] = awkbone;

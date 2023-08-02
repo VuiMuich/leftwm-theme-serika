@@ -2,46 +2,47 @@
 
 update_sink() {
     # sink=$(pacmd list-sinks | sed -n '/\* index:/ s/.*: //p')
-    sink=$(pactl list sinks | grep Name | awk '{print $2}')
+    # sink=$(pactl list sinks | grep Name | awk '{print $2}')
+    echo "Hello"
 }
 
 volume_up() {
     update_sink
-    pactl set-sink-volume "$sink" +1%
+    wpctl set-volume @DEFAULT_SINK@ 1%+
 }
 
 volume_down() {
     update_sink
-    pactl set-sink-volume "$sink" -1%
+    wpctl set-volume @DEFAULT_SINK@ 1%-
 }
 
 volume_mute() {
     update_sink
-    pactl set-sink-mute "$sink" toggle
+    wpctl set-mute @DEFAULT_SINK@ toggle
 }
 
 volume_print() {
     update_sink
 
-    active_port=$(pactl list sinks | grep Active)
-    muted=$(pactl list sinks | grep Mute | awk '{print $2}')
+    # active_port=$(pactl list sinks | grep Active)
+    muted=$(wpctl get-mute @DEFAULT_SINK@ | awk '{print $3}')
 
-    if echo "$active_port" | grep -q speaker && echo "$muted" | grep -q yes; then
-        icon="遼"
-    elif echo "$active_port" | grep -q headphones && echo "$muted" | grep -q no; then
-        icon=""
-    elif echo "$active_port" | grep -q headphones && echo "$muted" | grep -q yes; then
-        icon="ﳌ"
-    elif echo "$active_port" | grep -q headset && echo "$muted" | grep -q no; then
-        icon=""
-    elif echo "$active_port" | grep -q headset && echo "$muted" | grep -q yes; then
-        icon=""
-    elif echo "$active_port" | grep -q hdmi && echo "$muted" | grep -q no; then
+    if echo "$active_port" | grep -q speaker && [ -n "$muted" ]; then
+        icon="󰓄"
+    elif echo "$active_port" | grep -q headphones && [ -n "$muted" ]; then
+        icon="󰋋"
+    elif echo "$active_port" | grep -q headphones && [ -n "$muted" ]; then
+        icon="󰟎"
+    elif echo "$active_port" | grep -q headset && [ -n "$muted" ]; then
+        icon="󰋎"
+    elif echo "$active_port" | grep -q headset && [ -n "$muted" ]; then
+        icon="󰋐"
+    elif echo "$active_port" | grep -q hdmi && [ -n "$muted" ]; then
         icon="󰽟"
-    elif echo "$active_port" | grep -q hdmi && echo "$muted" | grep -q yes; then
+    elif echo "$active_port" | grep -q hdmi && [ -n "$muted" ]; then
         icon="󰽠"
     else
-        icon="蓼"
+        icon="󰓃"
     fi
     
     echo "$icon"
@@ -50,11 +51,11 @@ volume_print() {
 listen() {
     volume_print
 
-    pactl subscribe | while read -r event; do
-        if echo "$event" | grep -q "change"; then
-            volume_print
-        fi
-    done
+    # pactl subscribe | while read -r event; do
+    #     if echo "$event" | grep -q "change"; then
+    #         volume_print
+    #     fi
+    # done
 }
 
 case "$1" in

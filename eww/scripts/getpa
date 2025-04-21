@@ -1,74 +1,62 @@
-#!/usr/bin/env bash
+#!/usr/bin/env nu
 
-update_sink() {
-    # sink=$(pacmd list-sinks | sed -n '/\* index:/ s/.*: //p')
-    # sink=$(pactl list sinks | grep Name | awk '{print $2}')
-    echo "Hello"
+# volume.nu
+
+def update_sink [] {
+    # This is a placeholder in case you later want to change sinks dynamically.
+    # `@DEFAULT_SINK@` is used directly in wpctl.
+    null
 }
 
-volume_up() {
+def volume_up [] {
     update_sink
-    wpctl set-volume @DEFAULT_SINK@ 1%+
+    wpctl set-volume @DEFAULT_SINK@ "1%+"
 }
 
-volume_down() {
+def volume_down [] {
     update_sink
-    wpctl set-volume @DEFAULT_SINK@ 1%-
+    wpctl set-volume @DEFAULT_SINK@ "1%-"
 }
 
-volume_mute() {
+def volume_mute [] {
     update_sink
     wpctl set-mute @DEFAULT_SINK@ toggle
 }
 
-volume_print() {
-    update_sink
+def volume_print [] {
+    let muted = (
+      wpctl get-volume @DEFAULT_SINK@
+      | str contains "[MUTED]"
+    )
 
-    # active_port=$(pactl list sinks | grep Active)
-    muted=$(wpctl get-mute @DEFAULT_SINK@ | awk '{print $3}')
+    let active_port = (
+        pw-dump
+        | from json
+        | where type == "PipeWire:Interface:Node"
+        | where info.props."media.class"? == "Audio/Sink"
+        | get info.props."node.name"
+        | get 0
+        | parse -r '.*\.(?P<port_type>[^.]+)$'
+        | get port_type
+        | get 0
+    )
 
-    if echo "$active_port" | grep -q speaker && [ -n "$muted" ]; then
-        icon="󰓄"
-    elif echo "$active_port" | grep -q headphones && [ -n "$muted" ]; then
-        icon="󰋋"
-    elif echo "$active_port" | grep -q headphones && [ -n "$muted" ]; then
-        icon="󰟎"
-    elif echo "$active_port" | grep -q headset && [ -n "$muted" ]; then
-        icon="󰋎"
-    elif echo "$active_port" | grep -q headset && [ -n "$muted" ]; then
-        icon="󰋐"
-    elif echo "$active_port" | grep -q hdmi && [ -n "$muted" ]; then
-        icon="󰽟"
-    elif echo "$active_port" | grep -q hdmi && [ -n "$muted" ]; then
-        icon="󰽠"
-    else
-        icon="󰓃"
-    fi
-    
-    echo "$icon"
+    let icon = match $active_port {
+        'headphones' => { if $muted { "󰋋" } else { "󰟎" }},
+        'headset' => { if $muted { "󰋎" } else { "󰋐" }},
+        'hdmi' => { if $muted { "󰽟" } else { "󰽠" }},
+        'analog-stereo' => { if $muted { "󰓄" } else { "󰓃" }},
+        _ => "󰓃"
+    }
+
+    print $icon
 }
 
-listen() {
-    volume_print
-
-    # pactl subscribe | while read -r event; do
-    #     if echo "$event" | grep -q "change"; then
-    #         volume_print
-    #     fi
-    # done
+def main [arg?: string = ""] {
+    match $arg {
+        "up" => volume_up,
+        "down" => volume_down,
+        "mute" => volume_mute,
+        _ => volume_print
+    }
 }
-
-case "$1" in
-    --up)
-        volume_up
-        ;;
-    --down)
-        volume_down
-        ;;
-    --mute)
-        volume_mute
-        ;;
-    *)
-        listen
-        ;;
-esac

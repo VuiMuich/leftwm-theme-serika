@@ -35,8 +35,8 @@
                            || audio-icon == "󰽠"
                             ? "icon-small" : "icon-smaller"}
                 :value volume
-                :tooltip volume
-                :onchange  "pactl set-sink-volume @DEFAULT_SINK@ {}%")
+                :tooltip "${volume} %"
+                :onchange  "wpctl set-volume @DEFAULT_SINK@ {}%")
         (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "󰄌" : "󰚥"}
                 :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon-bat"  : "icon-smaller"}
                 :value  '${EWW_BATTERY["BAT0"].capacity}'
@@ -124,7 +124,8 @@
 ; Variables
 (defvar pwmen-open false)
 ; sliders
-(deflisten audio-icon "scripts/getpa")
+; (deflisten audio-icon "scripts/getpa")
+(defpoll audio-icon :interval "5s" "scripts/getpa")
 (defpoll volume :initial "50" :interval "16s" "scripts/getvol")
 (defpoll wifi-signal :initial "0" :interval "10s" "scripts/getwifi")
 (defpoll ssid :interval "10s" "nmcli -f IN-USE,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'")

@@ -19,12 +19,12 @@
         (metric :label "󰐿"
                 :label-class "icon-small"
                 :value '${EWW_RAM.used_mem_perc}'
-                :tooltip  '${EWW_RAM.used_mem_perc}'
+                :tooltip  '${round(EWW_RAM.used_mem_perc, 1)} %'
                 :onchange "")
         (metric :label ""
-                :label-class "icon-small"
+                :label-class "icon-smaller"
                 :value {wifi-signal != "" ? wifi-signal : "0.0"}
-                :tooltip "${wifi-signal != "" ? wifi-signal : "0.0"}"
+                :tooltip "${wifi-signal != "" ? wifi-signal : "0.0"} %"
                 :onchange "")
         (metric :label '${audio-icon}'
                 :label-class {audio-icon == "󰋋"
@@ -40,7 +40,7 @@
         (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "󰄌" : "󰚥"}
                 :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon-bat"  : "icon-smaller"}
                 :value  '${EWW_BATTERY["BAT0"].capacity}'
-                :tooltip '${EWW_BATTERY["BAT0"].capacity}'
+                :tooltip '${EWW_BATTERY["BAT0"].capacity} %'
                 :onchange "")
         (time)))
 
@@ -101,14 +101,11 @@
          :text "${wmstate.window_title ?: 'Desktop'}")))
 
 (defwidget time []
-    (box :class "time"
+      (box :class "time"
+        ; :tooltip {formattime(EWW_TIME, "Europe/Berlin", "%Y/%m/%d")}
         (button :onclick "eww open --toggle uhr" :class "icon-time" "󰥔")
         {time}))
-; (defwidget time []
-;       (box :class "time"
-;         ; :tooltip formattime(EWW_TIME, "Europe/Berlin", "%Y/%m/%d")
-;         (button :onclick "eww open --toggle uhr" :class "icon-time" "")
-;         formattime(EWW_TIME, "Europe/Berlin", "%H:%M")))
+        ; {formattime(EWW_TIME, "Europe/Berlin", "%Y/%m/%d %H:%M:%S")}))
 
 (defwidget uhr []
     (box :class "uhr"

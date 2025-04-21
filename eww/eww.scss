@@ -10,6 +10,13 @@
   font-size: 21px;
 }
 
+.tooltip {
+  background-color: #323437;
+  color: #dcd8cf;
+  font-family: Monoid Nerd Font;
+  font-size: 9px;
+}
+
 .uhr {
   background-color: #dcd8cf;
   color: #323437;
@@ -69,11 +76,11 @@
 }
 
 .icon-bat {
-  font-size: 27px;
+  font-size: 21px;
 }
 
 .icon-smaller {
-  font-size: 19px;
+  font-size: 16px;
   padding-right: 5px;
 }
 
@@ -82,20 +89,20 @@
 }
 
 .icon-ws-layout {
-  font-size: 21px;
+  font-size: 20px;
   padding-left: 21px;
   padding-right: 13px;
 }
 
 .icon-time {
-  font-size: 21px;
+  font-size: 19px;
   padding-right: 8px;
 }
 
 .time {
   font-family: Monoid Nerd Font Mono;
   font-size: 15px;
-  padding-right: 13px;
+  padding-right: 8px;
 }
 
 .workspaces button {

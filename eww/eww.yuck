@@ -120,9 +120,16 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
 (defwidget systemtray []
     (systray :pack-direction "ltr"))
 
+(defwidget weather []
+    (box :orientation "h"
+         :space-evenly false
+         (box :class "icon-small" "")
+         (box :class "time" "${weather}")))
+
 ; Variables
 (defvar pwmen-open false)
 ; sliders
+(defpoll weather :initial "" :interval "15min" "curl -s wttr.in/?format=3")
 (defpoll getpa :initial '{"volume":0.5,"muted":false,"icon":"󰓃"}' :interval "10s" "scripts/getpa")
 (defpoll wifi :initial '{"active":"yes","ssid":"n/c","signal":"0"}' :interval "10s" "scripts/getwifi")
 ; Time

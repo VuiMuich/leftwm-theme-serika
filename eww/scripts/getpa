@@ -8,6 +8,10 @@ def update_sink [] {
     null
 }
 
+def get_volume [] {
+    
+}
+
 def volume_up [] {
     update_sink
     wpctl set-volume @DEFAULT_SINK@ "1%+"
@@ -18,34 +22,34 @@ def volume_down [] {
     wpctl set-volume @DEFAULT_SINK@ "1%-"
 }
 
-def volume_mute [] {
+def toggle_mute [] {
     update_sink
     wpctl set-mute @DEFAULT_SINK@ toggle
 }
 
-def volume_print [] {
+def icon_print [] {
     let muted = (
-      wpctl get-volume @DEFAULT_SINK@
-      | str contains "[MUTED]"
+        wpctl get-volume @DEFAULT_SINK@
+        | str contains "[MUTED]"
     )
 
     let active_port = (
         pw-dump
         | from json
-        | where type == "PipeWire:Interface:Node"
-        | where info.props."media.class"? == "Audio/Sink"
-        | get info.props."node.name"
-        | get 0
-        | parse -r '.*\.(?P<port_type>[^.]+)$'
-        | get port_type
-        | get 0
+        | where type == "PipeWire:Interface:Device"
+        | where info.props."media.class"? == "Audio/Device"
+        | get info.params.EnumRoute
+        | flatten
+        | where direction == "Output" and available != "no"
+        | sort-by priority
+        | get 0.info.2
     )
 
     let icon = match $active_port {
         'headphones' => { if $muted { "󰋋" } else { "󰟎" }},
         'headset' => { if $muted { "󰋎" } else { "󰋐" }},
         'hdmi' => { if $muted { "󰽟" } else { "󰽠" }},
-        'analog-stereo' => { if $muted { "󰓄" } else { "󰓃" }},
+        'speaker' => { if $muted { "󰓄" } else { "󰓃" }},
         _ => "󰓃"
     }
 
@@ -56,7 +60,9 @@ def main [arg?: string = ""] {
     match $arg {
         "up" => volume_up,
         "down" => volume_down,
-        "mute" => volume_mute,
-        _ => volume_print
+        "mute" => toggle_mute,
+        "volume" => get_volume,
+        "switch" => update_sink,
+        _ => icon_print
     }
 }

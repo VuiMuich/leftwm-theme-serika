@@ -8,8 +8,9 @@
          :width 327
         ; (power-menu)
         ; (keyboard-layout)
-        ; (window-title)
-        (ws-layout)))
+        (window-title)
+        ; (ws-layout)
+        ))
 
 (defwidget sidestuff_right []
     (box :class "sidestuff"
@@ -57,20 +58,71 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
            :value value
            :onchange onchange)))
 
-(defwidget tags [ws-id]
-    (box :class "workspaces"
+(defwidget niri-stuff []
+    (box :class "niristuff"
          :orientation "h"
-         :space-evenly true
+         :space-evenly false
          :halign "center"
-      (box
-        (for tag in '${wmstate.workspaces[ws-id].tags}'
-          (button
-            :class {tag.mine ? "ws-button-mine" :
-                    tag.visible ? "ws-button-visible" :
-                    tag.urgent ? "ws-button-urgent" :
-                    tag.busy ? "ws-button-busy" : "ws-button"}
-            :onclick "leftwm-command \"SendWorkspaceToTag ${ws-id} ${tag.index}\""
-            {!tag.mine && !tag.busy && !tag.visible && !tag.urgent ?  "·" : "${tag.name}"})))))
+        (time)
+        (weather)
+        (metric :label '${getpa.icon}'
+                :label-class {getpa.icon == "󰋋"
+                           || getpa.icon == "󰟎"
+                           || getpa.icon == "󰋎"
+                           || getpa.icon == "󰋐"
+                           || getpa.icon == "󰽟"
+                           || getpa.icon == "󰽠"
+                            ? "icon-small" : "icon-smaller"}
+                :value '${getpa.volume}'
+                :tooltip 'Volume: ${getpa.volume} %'
+                :onchange  "wpctl set-volume @DEFAULT_SINK@ {}%")
+        (circular-metric :label "󰐿"
+                :label-class "icon-small"
+                :value '${EWW_RAM.used_mem_perc}'
+                :tooltip  'Mem Usage: ${round(EWW_RAM.used_mem_perc, 1)} %'
+                :onchange "")
+        (circular-metric :label ""
+                :label-class "icon-smaller"
+                :value {wifi.signal ?: "0.0"}
+                :tooltip "Wifi Network: ${wifi.ssid ?: "not connected"}
+Wifi Strength: ${wifi.signal ?: "0.0"} %"
+                :onchange "")
+        (circular-metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "󰄌" : "󰚥"}
+                :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon-bat"  : "icon-smaller"}
+                :value  '${EWW_BATTERY["BAT0"].capacity}'
+                :tooltip 'Battery Level: ${EWW_BATTERY["BAT0"].capacity} %'
+                :onchange "")
+        (window-title)))
+
+(defwidget circular-metric [label label-class value tooltip onchange]
+  (box :orientation "h"
+       :space-evenly false
+    (box :class label-class label)
+    (box :class "icon" :vexpand "false" :hexpand "false"
+       (circular-progress  :active {onchange != ""}
+                :class {value <= 25 ? "circular-meter-crit" : "circular-meter"}
+                :value value
+                :tooltip tooltip
+                :thickness 3)
+       (button 
+                :class "icon-small"
+                :onclick "$HOME/.config/eww/bar/scripts/pop system"
+                "")))
+)
+; (defwidget tags [ws-id]
+;     (box :class "workspaces"
+;          :orientation "h"
+;          :space-evenly true
+;          :halign "center"
+;       (box
+;         (for tag in '${wmstate.workspaces[ws-id].tags}'
+;           (button
+;             :class {tag.mine ? "ws-button-mine" :
+;                     tag.visible ? "ws-button-visible" :
+;                     tag.urgent ? "ws-button-urgent" :
+;                     tag.busy ? "ws-button-busy" : "ws-button"}
+;             :onclick "leftwm-command \"SendWorkspaceToTag ${ws-id} ${tag.index}\""
+;             {!tag.mine && !tag.busy && !tag.visible && !tag.urgent ?  "·" : "${tag.name}"})))))
              
 (defwidget keyboard-layout []
     (box :class "icon-key"
@@ -79,27 +131,39 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
          :halign "start"
         {kbd-layout != "" ? kbd-layout : ""}))
 
-(defwidget ws-layout []
-    (box :class "ws-layout"
-         :space-evenly false
-         :halign "start" 
-         :valign "start"
-         :width 220
-        (box :class "icon-ws-layout" "󰧨")
-        ; (box {replace(wmstate.workspaces[0].layout, '([A-Z])([a-z])*', '${2} ') ?: "n/a"})))
-        (box {wmstate.workspaces[0].layout ?: "n/a"})))
+; (defwidget ws-layout []
+;     (box :class "ws-layout"
+;          :space-evenly false
+;          :halign "start" 
+;          :valign "start"
+;          :width 220
+;         (box :class "icon-ws-layout" "󰧨")
+;         ; (box {replace(wmstate.workspaces[0].layout, '([A-Z])([a-z])*', '${2} ') ?: "n/a"})))
+;         (box {wmstate.workspaces[0].layout ?: "n/a"})))
+
+; (defwidget window-title []
+;     (box :class "ws-layout"
+;          :space-evenly false
+;          :halign "start" 
+;          :valign "start"
+;          :width 220
+;         (box :class "icon-ws-layout" "类")
+;         (label
+;          :limit-width 10
+;          :show-truncated true
+;          :text "${wmstate.window_title ?: 'Desktop'}")))
 
 (defwidget window-title []
     (box :class "ws-layout"
          :space-evenly false
          :halign "start" 
          :valign "start"
-         :width 220
-        (box :class "icon-ws-layout" "类")
+         :width 340
+        (box :class "icon-ws-layout" "󰧨")
         (label
-         :limit-width 10
+         :limit-width 55
          :show-truncated true
-         :text "${wmstate.window_title ?: 'Desktop'}")))
+         :text "${nirimsgwin?.title ?: "Desktop"}")))
 
 (defwidget time []
       (box :class "time"
@@ -136,9 +200,10 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
 (deflisten uhrwerk "uhrwerk -t $HOME/Git/uhrwerk/time-in-words-templates/de_1.ron")
 ; WM and Keyboard state
 (deflisten kbd-layout "scripts/get-kbd-layout")
-(deflisten wmstate 
-           :initial '{"workspaces":[{"layout":"", "tags":[{"name":"", "index":0, "mine":false, "busy":false, "visible":false, "urgent":false }] }]}'
-           "leftwm-state")
+; (deflisten wmstate 
+;            :initial '{"workspaces":[{"layout":"", "tags":[{"name":"", "index":0, "mine":false, "busy":false, "visible":false, "urgent":false }] }]}'
+;            "leftwm-state")
+(defpoll nirimsgwin :interval "5s" :initial '{"title":"N/A"}' "niri msg --json focused-window")
 
 ; Windows
 (defwindow left
@@ -148,16 +213,22 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
                                :y "10px"
                                :anchor "top left")
            :reserve (struts :side "top" :distance "55px")
-    (sidestuff_left))
+           :exclusive true
+           :focusable "none"
+           :stacking "bottom"
+           (sidestuff_left))
 
-(defwindow tags
-           :monitor 0
-           :windowtype "dock"
-           :geometry (geometry :x "0px"
-                               :y "10px"
-                               :anchor "top center")
-           :reserve (struts :side "top" :distance "55px")
-    (tags :ws-id 0))
+; (defwindow tags
+;            :monitor 0
+;            :windowtype "dock"
+;            :geometry (geometry :x "0px"
+;                                :y "10px"
+;                                :anchor "top center")
+;            :reserve (struts :side "top" :distance "55px")
+;            :exclusive true
+;            :focusable "none"
+;            :stacking "bottom"
+;            (tags :ws-id 0))
 
 (defwindow right
            :monitor 0
@@ -166,7 +237,20 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
                                :y "10px"
                                :anchor "top right")
            :reserve (struts :side "top" :distance "55px")
-    (sidestuff_right))
+           :exclusive true
+           :focusable "none"
+           :stacking "overlay"
+           (sidestuff_right))
+
+(defwindow niribar
+           :monitor 0
+           :geometry (geometry :x "0px"
+                               :y "10px"
+                               :anchor "top center")
+           :exclusive true
+           :focusable "none"
+           :stacking "bottom"
+           (niri-stuff))
 
 (defwindow tray
            :monitor 0
@@ -180,7 +264,9 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
                                :height "34px" ; this is a workaround, as gtk is expanding the height to this anyways
                                :anchor "top left")
            :reserve (struts :side "top" :distance "55px")
-    (systemtray)) 
+           :exclusive true
+           :stacking "bg"
+           (systemtray)) 
 
 (defwindow uhr
            :monitor 0
@@ -191,16 +277,19 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
                                :width "600px"
                                :height "55"
                                :anchor "bottom left")
-    (uhr))
+           :stacking "fg"
+           :focusable "none"
+           (uhr))
 
 (defwindow lock
            :monitor 0
            :windowtype "desktop"
            :stacking "fg"
            :wm-ignore true
+           :focusable "none"
            :geometry (geometry :x "0"
                                :y "0"
                                :width "100%"
                                :height "100%"
                                :anchor "top left")
-    (lock))
+           (lock))

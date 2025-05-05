@@ -1,2 +1,7 @@
-#!/usr/bin/env bash
-nmcli -f IN-USE,SIGNAL,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'
+#!/usr/bin/env nu
+nmcli -t -f active,ssid,signal dev wifi
+| lines
+| filter {|line| $line | str starts-with "yes:" }
+| split column ":" active ssid signal
+| get 0
+| to json

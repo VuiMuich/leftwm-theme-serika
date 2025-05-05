@@ -1,68 +1,35 @@
-#!/usr/bin/env nu
+#! /usr/bin/env nu
+# Get mute and volume
+let volume_info = (wpctl get-volume @DEFAULT_SINK@)
+let is_muted = ($volume_info | str contains "[MUTED]")
+let volume = ($volume_info | str replace  " [MUTED]"  "" | parse "Volume: {vol}" | get vol.0 | into float | $in * 100 )
 
-# volume.nu
+# Get active port type
+let port_type = (
+  pw-dump
+  | from json
+  | where type == "PipeWire:Interface:Device"
+  | where info.props."media.class" == "Audio/Device"
+  | get info.params.EnumRoute
+  | flatten
+  | where direction == "Output" and available != "no"
+  | sort-by priority
+  | get 0.info.2
+)
 
-def update_sink [] {
-    # This is a placeholder in case you later want to change sinks dynamically.
-    # `@DEFAULT_SINK@` is used directly in wpctl.
-    null
+# Pick icon
+let icon = match $port_type {
+      'headphones' => { if $is_muted { "󰟎" } else { "󰋋" }},
+      'headset' => { if $is_muted { "󰋐" } else { "󰋎" }},
+      'hdmi' => { if $is_muted { "󰽠" } else { "󰽟" }},
+      'speaker' => { if $is_muted { "󰓄" } else { "󰓃" }},
+      _ => "󰓃"
 }
 
-def get_volume [] {
-    
+# Final output for Eww
+{
+  volume: $volume
+  muted: $is_muted
+  icon: $icon
 }
-
-def volume_up [] {
-    update_sink
-    wpctl set-volume @DEFAULT_SINK@ "1%+"
-}
-
-def volume_down [] {
-    update_sink
-    wpctl set-volume @DEFAULT_SINK@ "1%-"
-}
-
-def toggle_mute [] {
-    update_sink
-    wpctl set-mute @DEFAULT_SINK@ toggle
-}
-
-def icon_print [] {
-    let muted = (
-        wpctl get-volume @DEFAULT_SINK@
-        | str contains "[MUTED]"
-    )
-
-    let active_port = (
-        pw-dump
-        | from json
-        | where type == "PipeWire:Interface:Device"
-        | where info.props."media.class"? == "Audio/Device"
-        | get info.params.EnumRoute
-        | flatten
-        | where direction == "Output" and available != "no"
-        | sort-by priority
-        | get 0.info.2
-    )
-
-    let icon = match $active_port {
-        'headphones' => { if $muted { "󰋋" } else { "󰟎" }},
-        'headset' => { if $muted { "󰋎" } else { "󰋐" }},
-        'hdmi' => { if $muted { "󰽟" } else { "󰽠" }},
-        'speaker' => { if $muted { "󰓄" } else { "󰓃" }},
-        _ => "󰓃"
-    }
-
-    print $icon
-}
-
-def main [arg?: string = ""] {
-    match $arg {
-        "up" => volume_up,
-        "down" => volume_down,
-        "mute" => toggle_mute,
-        "volume" => get_volume,
-        "switch" => update_sink,
-        _ => icon_print
-    }
-}
+| to json

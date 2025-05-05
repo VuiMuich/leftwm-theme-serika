@@ -23,20 +23,21 @@
                 :onchange "")
         (metric :label ""
                 :label-class "icon-smaller"
-                :value {wifi-signal != "" ? wifi-signal : "0.0"}
-                :tooltip "${wifi-signal != "" ? wifi-signal : "0.0"} %"
+                :value {wifi.signal ?: "0.0"}
+                :tooltip "Wifi Network: ${wifi.ssid ?: "not connected"}
+Wifi Strength: ${wifi.signal ?: "0.0"} %"
                 :onchange "")
-        (metric :label '${audio-icon}'
-                :label-class {audio-icon == "󰋋"
-                           || audio-icon == "󰟎"
-                           || audio-icon == "󰋎"
-                           || audio-icon == "󰋐"
-                           || audio-icon == "󰽟"
-                           || audio-icon == "󰽠"
-                            ? "icon-small" : "icon-smaller"}
-                :value volume
-                :tooltip "${volume} %"
-                :onchange  "wpctl set-volume @DEFAULT_SINK@ {}%")
+        (metric :label '${getpa.icon}'
+                        :label-class {getpa.icon == "󰋋"
+                                   || getpa.icon == "󰟎"
+                                   || getpa.icon == "󰋎"
+                                   || getpa.icon == "󰋐"
+                                   || getpa.icon == "󰽟"
+                                   || getpa.icon == "󰽠"
+                                    ? "icon-small" : "icon-smaller"}
+                        :value '${getpa.volume}'
+                        :tooltip 'Volume: ${getpa.volume} %'
+                        :onchange  "wpctl set-volume @DEFAULT_SINK@ {}%")
         (metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "󰄌" : "󰚥"}
                 :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon-bat"  : "icon-smaller"}
                 :value  '${EWW_BATTERY["BAT0"].capacity}'
@@ -121,11 +122,8 @@
 ; Variables
 (defvar pwmen-open false)
 ; sliders
-; (deflisten audio-icon "scripts/getpa")
-(defpoll audio-icon :interval "5s" "scripts/getpa")
-(defpoll volume :initial "50" :interval "16s" "scripts/getvol")
-(defpoll wifi-signal :initial "0" :interval "10s" "scripts/getwifi")
-(defpoll ssid :interval "10s" "nmcli -f IN-USE,SSID device wifi | awk '/^\*/{if (NR!=1) {print $2}}'")
+(defpoll getpa :initial '{"volume":0.5,"muted":false,"icon":"󰓃"}' :interval "10s" "scripts/getpa")
+(defpoll wifi :initial '{"active":"yes","ssid":"n/c","signal":"0"}' :interval "10s" "scripts/getwifi")
 ; Time
 ; (deflisten time "$HOME/.cargo/bin/uhrwerk -d")
 (deflisten time "uhrwerk -d")

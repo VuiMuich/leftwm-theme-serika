@@ -103,10 +103,11 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
 
 (defwidget time []
       (box :class "time"
-        ; :tooltip {formattime(EWW_TIME, "Europe/Berlin", "%Y/%m/%d")}
-        (button :onclick "eww open --toggle uhr" :class "icon-time" "󰥔")
-        {time}))
-        ; {formattime(EWW_TIME, "Europe/Berlin", "%Y/%m/%d %H:%M:%S")}))
+           :space-evenly false
+           :halign "start"
+           :tooltip {formattime(EWW_TIME, "%a %d. %m. %Y")}
+           (button :onclick "eww open --toggle uhr" :class "icon-time" "󰥔")
+           {formattime(EWW_TIME, "%H:%M:%S")}))
 
 (defwidget uhr []
     (box :class "uhr"
@@ -125,9 +126,6 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
 (defpoll getpa :initial '{"volume":0.5,"muted":false,"icon":"󰓃"}' :interval "10s" "scripts/getpa")
 (defpoll wifi :initial '{"active":"yes","ssid":"n/c","signal":"0"}' :interval "10s" "scripts/getwifi")
 ; Time
-; (deflisten time "$HOME/.cargo/bin/uhrwerk -d")
-(deflisten time "uhrwerk -d")
-; (deflisten uhrwerk "$HOME/.cargo/bin/uhrwerk -t $HOME/Git/uhrwerk/time-in-words-templates/de_1.ron")
 (deflisten uhrwerk "uhrwerk -t $HOME/Git/uhrwerk/time-in-words-templates/de_1.ron")
 ; WM and Keyboard state
 (deflisten kbd-layout "scripts/get-kbd-layout")

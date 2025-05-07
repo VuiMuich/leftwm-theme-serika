@@ -108,7 +108,7 @@ Wifi Strength: ${wifi?.signal ?: "0.0"} %"
            :halign "start"
            :tooltip {formattime(EWW_TIME, "%a %d. %m. %Y")}
            (button :onclick "eww open --toggle uhr" :class "icon-time" "󰥔")
-           {formattime(EWW_TIME, "%H:%M:%S")}))
+           {formattime(EWW_TIME, "%H:%M")} (box :class "time-sec" {formattime(EWW_TIME, ":%S")})))
 
 (defwidget uhr []
     (box :class "uhr"

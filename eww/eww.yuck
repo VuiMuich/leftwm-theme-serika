@@ -6,17 +6,6 @@
          :halign "center"
         (time)
         (weather)
-        (metric :label '${getpa.icon}'
-                :label-class {getpa.icon == "󰋋"
-                           || getpa.icon == "󰟎"
-                           || getpa.icon == "󰋎"
-                           || getpa.icon == "󰋐"
-                           || getpa.icon == "󰽟"
-                           || getpa.icon == "󰽠"
-                            ? "icon-small" : "icon-smaller"}
-                :value '${getpa.volume}'
-                :tooltip 'Volume: ${getpa.volume} %'
-                :onchange  "wpctl set-volume @DEFAULT_SINK@ {}%")
         (circular-metric :label "󰐿"
                 :label-class "icon-small"
                 :value '${EWW_RAM.used_mem_perc}'
@@ -33,6 +22,17 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
                 :value  '${EWW_BATTERY["BAT0"].capacity}'
                 :tooltip 'Battery Level: ${EWW_BATTERY["BAT0"].capacity} %'
                 :onchange "")
+        (metric :label '${getpa.icon}'
+                :label-class {getpa.icon == "󰋋"
+                           || getpa.icon == "󰟎"
+                           || getpa.icon == "󰋎"
+                           || getpa.icon == "󰋐"
+                           || getpa.icon == "󰽟"
+                           || getpa.icon == "󰽠"
+                            ? "icon-small" : "icon-smaller"}
+                :value '${getpa.volume}'
+                :tooltip 'Volume: ${getpa.volume} %'
+                :onchange  "wpctl set-volume @DEFAULT_SINK@ {}%")
         (window-title)))
 
 (defwidget circular-metric [label label-class value tooltip onchange]

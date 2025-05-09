@@ -24,9 +24,9 @@
                 :onchange "")
         (metric :label ""
                 :label-class "icon-smaller"
-                :value {wifi.signal ?: "0.0"}
-                :tooltip "Wifi Network: ${wifi.ssid ?: "not connected"}
-Wifi Strength: ${wifi.signal ?: "0.0"} %"
+                :value {wifi?.signal ?: "0.0"}
+                :tooltip "Wifi Network: ${wifi?.ssid ?: "not connected"}
+Wifi Strength: ${wifi?.signal ?: "0.0"} %"
                 :onchange "")
         (metric :label '${getpa.icon}'
                         :label-class {getpa.icon == "󰋋"
@@ -125,7 +125,7 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
     (box :orientation "h"
          :space-evenly false
          (box :class "icon-small" "")
-         (box :class "time" "${weather}")))
+         (box :class "time" "${weather ?: "n/a"}")))
 
 ; Variables
 (defvar pwmen-open false)

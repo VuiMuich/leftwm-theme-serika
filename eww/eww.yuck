@@ -13,9 +13,9 @@
                 :onchange "")
         (circular-metric :label ""
                 :label-class "icon-smaller"
-                :value {wifi.signal ?: "0.0"}
-                :tooltip "Wifi Network: ${wifi.ssid ?: "not connected"}
-Wifi Strength: ${wifi.signal ?: "0.0"} %"
+                :value {wifi?.signal ?: "0.0"}
+                :tooltip "Wifi Network: ${wifi?.ssid ?: "not connected"}
+Wifi Strength: ${wifi?.signal ?: "0.0"} %"
                 :onchange "")
         (circular-metric :label {EWW_BATTERY["BAT0"].status == "Discharging" ? "󰄌" : "󰚥"}
                 :label-class {EWW_BATTERY["BAT0"].status == "Discharging" ? "icon-bat"  : "icon-smaller"}
@@ -104,7 +104,7 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
     (box :orientation "h"
          :space-evenly false
          (box :class "icon-small" "")
-         (box :class "time" "${weather}")))
+         (box :class "time" "${weather ?: "n/a"}")))
 
 ; Variables
 (defvar pwmen-open false)

@@ -3,5 +3,5 @@ nmcli -t -f active,ssid,signal dev wifi
 | lines
 | filter {|line| $line | str starts-with "yes:" }
 | split column ":" active ssid signal
-| get 0
+| get -i 0
 | to json

@@ -125,7 +125,7 @@ Wifi Strength: ${wifi?.signal ?: "0.0"} %"
 (defwidget weather []
     (box :orientation "h"
          :space-evenly false
-         (box :class "icon-small" "")
+         (box :class "icon-weather" "")
          (box :class "time" "${weather ?: "n/a"}")))
 
 ; Variables

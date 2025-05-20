@@ -8,8 +8,9 @@
          :width 327
         ; (power-menu)
         ; (keyboard-layout)
-        ; (window-title)
-        (ws-layout)))
+        (weather)
+        (ws-layout)
+        (window-title)))
 
 (defwidget sidestuff_right []
     (box :class "sidestuff"
@@ -95,7 +96,7 @@ Wifi Strength: ${wifi.signal ?: "0.0"} %"
          :halign "start" 
          :valign "start"
          :width 220
-        (box :class "icon-ws-layout" "类")
+        (box :class "icon-ws-layout" "")
         (label
          :limit-width 10
          :show-truncated true

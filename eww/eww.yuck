@@ -96,9 +96,10 @@ Wifi Strength: ${wifi?.signal ?: "0.0"} %"
          :halign "start" 
          :valign "start"
          :width 220
+         :tooltip "${wmstate.window_title ?: 'Desktop'}"
         (box :class "icon-ws-layout" "")
         (label
-         :limit-width 10
+         :limit-width 55
          :show-truncated true
          :text "${wmstate.window_title ?: 'Desktop'}")))
 
